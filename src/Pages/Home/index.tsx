@@ -4,15 +4,22 @@ import { useAppDispatch, useAppSelector } from "../../State/Hooks";
 import { login, logout } from "../../State/Slices/UserSlice";
 import { auth, unauth } from "../../State/Slices/AuthSlice";
 import LoginContainer from "../../Components/LoginContainer";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import firebase from 'firebase/compat/app';
 import { UserType } from "../../Helpers/Types/UserTypes";
 import { Role } from "../../Helpers/Enums/UserEnums";
+import { PageEnum } from "../../Helpers/Enums/PageEnums";
+import HomeContainer from "../../Components/Home/HomeContainer";
+
+
+
+
 
 
 const HomePage = () => {
-    const name = useAppSelector(state => state.game.name);
-    const year = useAppSelector(state => state.game.year);
+    const [page,setPage]: [PageEnum,any] = useState<PageEnum>(PageEnum.Home);
+
+    const isMusicEnabled = useAppSelector(state => state.settings.musicEnabled);
 
     const authState = useAppSelector(state => state.auth)
     const dispatch = useAppDispatch();
@@ -40,24 +47,35 @@ const HomePage = () => {
         })
       }, [dispatch])
 
-    const [musicPlay] = useSound("./music/celtic.mp3", {
-        volume:0.05
+    const [musicPlay, player] = useSound("./music/celtic.mp3", {
+        volume:0.05,
     });
+
+    const handlePlayClicked = () => {
+        if(isMusicEnabled){
+            setMusic(true);
+        }
+        setPage(PageEnum.Game);
+    }
+
+    const setMusic = (on:boolean) => {
+        if(!player.sound.playing() && on){
+            player.sound.loop(true);
+            musicPlay();
+        }else if(!on){
+            player.pause();
+        }
+    }
 
     return(
         <div className="bg-slate-400 w-screen h-screen flex background overflow-hidden text-white">
-            {authState.isAuthenticated && <>
-                <div className="h-full flex-1 flex flex-col justify-end">
-                    <p className="font-bold text-xl p-4">{name}</p>
-                </div>
-                <GameContainer />
-                <div className="h-full flex-1">{year}</div>
-            </>}
+            {authState.isAuthenticated && (<>
+                {page === PageEnum.Game && <GameContainer setMusic={setMusic.bind(this)} setPage={setPage}/>}
+                {page === PageEnum.Home && <HomeContainer onPlayClicked={handlePlayClicked}/>}
+            </>)
+            }
 
-            {!authState.isAuthenticated && <>
-                {/* LOGIN PAGE */}
-                <LoginContainer />
-            </>}
+            {!authState.isAuthenticated && <LoginContainer />}
             
         </div>
     )

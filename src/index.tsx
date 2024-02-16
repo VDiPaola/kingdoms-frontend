@@ -71,15 +71,16 @@ const uiConfig: firebaseui.auth.Config = {
   // }}
 };
 
-// Initialize the FirebaseUI Widget using Firebase.
-const ui = new firebaseui.auth.AuthUI(app.auth());
-// The start method will wait until the DOM is loaded.
-if (ui.isPendingRedirect()) {
-  ui.start('#firebaseui-auth-container', uiConfig);
-}
+firebase.auth().onAuthStateChanged((user)=>{
+  if(!user){
+    // Initialize the FirebaseUI Widget using Firebase.
+    const ui = new firebaseui.auth.AuthUI(app.auth());
 
-
-
+    if (!ui.isPendingRedirect()) {
+      ui.start('#firebaseui-auth-container', uiConfig);
+    }
+  }
+})
 
 
 const App = () => {

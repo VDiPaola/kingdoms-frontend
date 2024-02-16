@@ -31,5 +31,5 @@ const userSlice = createSlice({
 })
 
 
-export const {setDarkMode, setLanguage} = userSlice.actions;
+export const {setDarkMode, setLanguage,setMusicEnabled,setSfxEnabled} = userSlice.actions;
 export default userSlice.reducer;

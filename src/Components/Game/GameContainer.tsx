@@ -2,28 +2,49 @@ import { useEffect, useRef, useState } from "react"
 import { useAppDispatch, useAppSelector } from "../../State/Hooks";
 import { VariableChangeEnum, VariableEnum } from "../../Helpers/Enums/GameEnums";
 import { variableChanges } from "../../State/Slices/GameSlice";
-import { CardType } from "../../Helpers/Types/GameTypes";
+import { CardType, VariableChangeType } from "../../Helpers/Types/GameTypes";
 import GameStats from "./GameStats";
 import GameContent from "./GameContent";
 import useSound from "use-sound";
+import { ImVolumeMute2,ImVolumeMedium } from "react-icons/im";
+import { FaHome } from "react-icons/fa";
+import { IoMdSettings } from "react-icons/io";
 
 import throwSfx from '../../sfx/card_swipe.mp3'
+import { LeftContainer, MiddleContainer, RightContainer } from "../ContainerComponents";
+import { setMusicEnabled } from "../../State/Slices/SettingsSlice";
+import { PageEnum } from "../../Helpers/Enums/PageEnums";
 
-const GameContainer = () => {
+
+type GameContainerPropsType = {
+    setMusic:Function,
+    setPage:(page:PageEnum) => any
+}
+
+const GameContainer = (props:GameContainerPropsType) => {
+    const name = useAppSelector(state => state.game.name);
+    const year = useAppSelector(state => state.game.year);
+    const isMusicEnabled = useAppSelector(state => state.settings.musicEnabled);
+
     const [cardDeg, setCardDeg] = useState(0);
-    const degMax = window.screen.availWidth / 90;
+
+    const maxDegRef = useRef<number>(window.screen.availWidth / 90);
+
+
     const gameVars = useAppSelector(state => state.game.variables);
-    const isProcessing = useRef<boolean>(false);
+    const isProcessingRef = useRef<boolean>(false);
     const [isCardThrown, setIsCardThrown] = useState(false);
+
+    const [selectedVariableChanges,setSelectedVariableChanges]: [Array<VariableChangeType> | undefined,any] = useState();
 
     const [throwSFXPlay] = useSound(throwSfx);
 
     const dispatch = useAppDispatch();
 
     const [cards,setCards]: [CardType[],any] = useState([{
-        text:"Theres a fire on the wall",
-        characterName:"Jon snow",
-        characterTitle:"lord of the something",
+        text:"A Civil uprising has started, shall we send our troops to stop them?",
+        characterName:"James",
+        characterTitle:"Military Captain",
         option1:{text:"Yes", variableChanges:[
             {variable:VariableEnum.Military,change:VariableChangeEnum.NEGATIVE_SMALL},
             {variable:VariableEnum.Economy,change:VariableChangeEnum.POSITIVE_MEDIUM},
@@ -38,21 +59,34 @@ const GameContainer = () => {
         text:"Theres a flood in town",
         characterName:"Jon ice",
         characterTitle:"lord of the something else",
-        option1:{text:"Kill", variableChanges:[]},
-        option2:{text:"Save", variableChanges:[]},
+        option1:{text:"Let them Die", variableChanges:[]},
+        option2:{text:"Save Them", variableChanges:[]},
         image:"https://res.cloudinary.com/devolver-digital/image/upload/v1704993339/mothership-payload/1704993339346_thumbnail-reigns-3k_duacd0.jpg"
     }]);
 
-    const handleMouseMove = (distance:number) => {
+    const handleMouseMove = (distance:number, isTouchEnabled:boolean) => {
         //card animation
-        if(distance > degMax) distance = degMax;
-        if(distance < -degMax) distance = -degMax;
+        if(distance > maxDegRef.current) distance = maxDegRef.current;
+        if(distance < -maxDegRef.current) distance = -maxDegRef.current;
         setCardDeg(-distance);
+
+        //variable changes
+        if(!isProcessingRef.current){
+            if(distance < 0){
+                if (selectedVariableChanges !== cards[0].option1.variableChanges) setSelectedVariableChanges(cards[0].option1.variableChanges);
+            }else if(distance > 0){
+                if (selectedVariableChanges !== cards[0].option2.variableChanges) setSelectedVariableChanges(cards[0].option2.variableChanges);
+            }else{
+                setSelectedVariableChanges(undefined);
+            }
+        }
+        
     }
 
     const handleGameControllerClick  = (side:"left" | "right") => {
-        if(isProcessing.current) return;
-        isProcessing.current = true;
+        if(isProcessingRef.current) return;
+        isProcessingRef.current = true;
+        setSelectedVariableChanges(undefined);
         
         //picks a decision
         switch(side){
@@ -70,25 +104,77 @@ const GameContainer = () => {
     }
 
     const turnNextCard = () => {
+        setCardDeg(0);
         setIsCardThrown(false);
         setCards(cards.slice(1));
 
-        isProcessing.current = false;
+        isProcessingRef.current = false;
+    }
+
+    const handleMuteClick = () => {
+        const isEnabled = !isMusicEnabled;
+        props.setMusic(isEnabled);
+        dispatch(setMusicEnabled(isEnabled));
+    }
+    
+
+    const handleHomeClick = () => {
+        //make sure its saved then go to home page
+        props.setPage(PageEnum.Home);
+    }
+
+    const handleSettingsClick = () => {
+        props.setPage(PageEnum.Settings);
     }
 
     return (
-        <div className="h-full flex-1 gamePrimary flex flex-col">
-            <GameStats variables={gameVars}/>
+        <>
+        <LeftContainer>
+            <div className="h-full w-full flex flex-col justify-end">
+                <p className="font-bold text-xl p-4">{name}</p>
+            </div>
+        </LeftContainer>
+
+        <MiddleContainer>
+            <GameStats variables={gameVars} variableChanges={isProcessingRef.current ? undefined : selectedVariableChanges}/>
             {cards.length > 0 && 
-            <GameContent 
-                GameControllerProps={{onClick:handleGameControllerClick,onMouseMove:handleMouseMove}} 
-                cardDeg={cardDeg}
-                card={cards[0]}
-                isThrown={isCardThrown}
-                turnNextCard={turnNextCard}/>}
+                <GameContent 
+                    GameControllerProps={{onClick:handleGameControllerClick,onMouseMove:handleMouseMove}} 
+                    cardDeg={cardDeg}
+                    card={cards[0]}
+                    isThrown={isCardThrown}
+                    turnNextCard={turnNextCard}/>
+            }
+                
+            <div className="w-full flex-1">
+                <div className="w-full flex justify-center items-center p-2 relative space-x-2 text-lg">
+
+                    <div className="hover:drop-shadow-md hover:scale-105 transition-all duration-100 ease-out cursor-pointer p-1 relative z-50" onClick={handleHomeClick}>
+                        <FaHome />
+                    </div>
+
+                    <div className="hover:drop-shadow-md hover:scale-105 transition-all duration-100 ease-out cursor-pointer p-1 relative z-50" onClick={handleSettingsClick}>
+                        <IoMdSettings />
+                    </div>
+
+                    <div className="hover:drop-shadow-md hover:scale-105 transition-all duration-100 ease-out cursor-pointer p-1 relative z-50" onClick={handleMuteClick}>
+                        {isMusicEnabled ? <ImVolumeMedium /> : <ImVolumeMute2 /> }
+                    </div>
+
+                    
+                    
+                    
+
+                </div>
+                
+            </div>
+        </MiddleContainer>
             
-            <div className="w-full flex-1">something</div>
-        </div>
+
+        <RightContainer>
+            <p>{year}</p>
+        </RightContainer>
+        </>
     )
 }
 

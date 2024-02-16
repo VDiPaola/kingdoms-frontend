@@ -3,6 +3,8 @@ import { CardType } from "../../Helpers/Types/GameTypes"
 import GameController, { GameControllerPropsType } from "./GameController"
 import { flushCss } from "../../Helpers/HelperFunctions"
 import { useSpring, animated } from '@react-spring/web'
+import useSound from "use-sound"
+import cardFlipSfx from '../../sfx/card_flip.mp3'
 
 type GameContentPropsType = {
     GameControllerProps:GameControllerPropsType,
@@ -24,7 +26,9 @@ const GameContent = (props:GameContentPropsType) => {
 
     const [springs, api] = useSpring(()=>({
         from: { skewX: 0,rotateY:0,opacity:0}
-      }))
+    }))
+
+    const [cardFlipSfxPlay] = useSound(cardFlipSfx, {volume:0.4});
 
     const getCardStyle = ():any => {
         const style:any = {
@@ -83,6 +87,7 @@ const GameContent = (props:GameContentPropsType) => {
                 cardTextRef.current?.classList.remove("cardTextThrow");
 
                 //flip card
+                cardFlipSfxPlay();
                 api.set({opacity:1});
                 api.start({
                     from: { skewX: 0,rotateY:0 },
@@ -128,14 +133,15 @@ const GameContent = (props:GameContentPropsType) => {
                 textEl.removeEventListener("transitionend", handleTextTransitionEnd);
             }
         }
-    },[props,cardImage,api])
+    },[props, cardImage, api, cardFlipSfxPlay])
 
     return (
         <div className="w-full grow-[9] gameSecondary p-2 flex flex-col justify-around items-center space-x-2 font-bold relative">
             {/* CONTROLS */}
             {!props.isThrown && !showCardBack && <GameController 
                 onClick={props.GameControllerProps.onClick} 
-                onMouseMove={props.GameControllerProps.onMouseMove}/>}
+                onMouseMove={props.GameControllerProps.onMouseMove}
+                />}
             
 
             <p ref={cardTextRef} className="cardText">{props.card.text}</p>
@@ -155,9 +161,11 @@ const GameContent = (props:GameContentPropsType) => {
                                 <div className="bg-neutral-900/30 gameCardOverlay top-0 w-full h-full absolute z-10" 
                                 style={props.cardDeg !== 0 ? {transform:`rotate(${-props.cardDeg/2}deg) translateY(-75%) scaleX(10)`} : {}}></div>
 
+                                {props.cardDeg !== 0 && 
                                 <div className={`w-full py-4 text-white relative z-20 flex ${props.cardDeg > 0 ? "justify-start" : "justify-end"}`}>
                                     <div className="w-1/4 flex justify-center items-center"><p>{props.cardDeg > 0 ? props.card.option1.text : props.card.option2.text}</p></div>
-                                </div>
+                                </div>}
+                                
                             </>}
 
                     </div>
