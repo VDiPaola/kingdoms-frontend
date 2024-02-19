@@ -162,7 +162,7 @@ const GameContent = (props:GameContentPropsType) => {
                                 style={props.cardDeg !== 0 ? {transform:`rotate(${-props.cardDeg/2}deg) translateY(-75%) scaleX(10)`} : {}}></div>
 
                                 {props.cardDeg !== 0 && 
-                                <div className={`w-full py-4 text-white relative z-20 flex ${props.cardDeg > 0 ? "justify-start" : "justify-end"}`}>
+                                <div className={`w-full py-4 text-white relative z-20 flex text-center ${props.cardDeg > 0 ? "justify-start" : "justify-end"}`}>
                                     <div className="w-1/4 flex justify-center items-center"><p>{props.cardDeg > 0 ? props.card.option1.text : props.card.option2.text}</p></div>
                                 </div>}
                                 

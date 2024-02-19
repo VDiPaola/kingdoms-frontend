@@ -18,7 +18,6 @@ import { PersistGate } from 'redux-persist/integration/react';
 
 import { persistor } from './State/Store';
 
-
 //firebase
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -32,7 +31,8 @@ const firebaseConfig = {
   storageBucket: "kingdoms-84a59.appspot.com",
   messagingSenderId: "70709251243",
   appId: "1:70709251243:web:766fdc7143f5d4868cbbee",
-  measurementId: "G-VW1DSFXFNE"
+  measurementId: "G-VW1DSFXFNE",
+  databaseURL: "https://kingdoms-84a59-default-rtdb.firebaseio.com",
 };
 
 // Initialize Firebase
@@ -81,7 +81,6 @@ firebase.auth().onAuthStateChanged((user)=>{
     }
   }
 })
-
 
 const App = () => {
   return(

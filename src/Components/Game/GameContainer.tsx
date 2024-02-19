@@ -14,6 +14,7 @@ import throwSfx from '../../sfx/card_swipe.mp3'
 import { LeftContainer, MiddleContainer, RightContainer } from "../ContainerComponents";
 import { setMusicEnabled } from "../../State/Slices/SettingsSlice";
 import { PageEnum } from "../../Helpers/Enums/PageEnums";
+import { ref, set, getDatabase } from 'firebase/database';
 
 
 type GameContainerPropsType = {
@@ -22,6 +23,7 @@ type GameContainerPropsType = {
 }
 
 const GameContainer = (props:GameContainerPropsType) => {
+    //game datta
     const name = useAppSelector(state => state.game.name);
     const year = useAppSelector(state => state.game.year);
     const isMusicEnabled = useAppSelector(state => state.settings.musicEnabled);
@@ -37,10 +39,12 @@ const GameContainer = (props:GameContainerPropsType) => {
 
     const [selectedVariableChanges,setSelectedVariableChanges]: [Array<VariableChangeType> | undefined,any] = useState();
 
+    //sfx
     const [throwSFXPlay] = useSound(throwSfx);
 
     const dispatch = useAppDispatch();
 
+    //test data
     const [cards,setCards]: [CardType[],any] = useState([{
         text:"A Civil uprising has started, shall we send our troops to stop them?",
         characterName:"James",
@@ -63,6 +67,14 @@ const GameContainer = (props:GameContainerPropsType) => {
         option2:{text:"Save Them", variableChanges:[]},
         image:"https://res.cloudinary.com/devolver-digital/image/upload/v1704993339/mothership-payload/1704993339346_thumbnail-reigns-3k_duacd0.jpg"
     }]);
+
+    useEffect(()=>{
+        const db = getDatabase();
+        set(ref(db, 'cards'), {
+          username: name,
+        });
+        
+    }, [])
 
     const handleMouseMove = (distance:number, isTouchEnabled:boolean) => {
         //card animation
