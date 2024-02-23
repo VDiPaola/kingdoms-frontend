@@ -15,7 +15,7 @@ import userReducer from "../Slices/UserSlice";
 import authReducer from "../Slices/AuthSlice";
 import settingsReducer from "../Slices/SettingsSlice";
 import gameReducer from '../Slices/GameSlice'
-import FirebaseSlice from "../Slices/FirebaseSlice";
+import firestoreReducer from "../Slices/firestoreSlice";
 
 
 const settingsReducerPersist = persistReducer({key: "settings",version: 1,storage,}, settingsReducer);
@@ -23,7 +23,7 @@ const authReducerPersist = persistReducer({key: "auth",version: 1,storage,}, aut
 const userReducerPersist = persistReducer({key: "user",version: 1,storage,}, userReducer);
 
 const store = configureStore({
-  reducer: { settings: settingsReducerPersist, auth: authReducerPersist, user: userReducerPersist, game: gameReducer, firebase:FirebaseSlice },
+  reducer: { settings: settingsReducerPersist, auth: authReducerPersist, user: userReducerPersist, game: gameReducer, firestore: firestoreReducer},
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {

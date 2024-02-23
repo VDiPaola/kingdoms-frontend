@@ -1,5 +1,6 @@
 export enum PageEnum{
     Home,
     Settings,
-    Game
+    Game,
+    GameSaves
 }

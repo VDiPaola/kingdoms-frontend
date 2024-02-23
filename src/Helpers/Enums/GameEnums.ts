@@ -1,9 +1,9 @@
 export enum VariableEnum{
-    Piety = "Piety",
-    Economy = "Economy",
-    Military = "Military",
-    Population = "Population",
-    Respect = "Respect"
+    Piety = "PIETY",
+    Economy = "ECONOMY",
+    Military = "MILITARY",
+    Population = "POPULATION",
+    Respect = "RESPECT"
 }
 
 export enum VariableChangeEnum{
@@ -14,4 +14,11 @@ export enum VariableChangeEnum{
     NEGATIVE_SMALL = "NEGATIVE_SMALL",
     NEGATIVE_MEDIUM = "NEGATIVE_MEDIUM",
     NEGATIVE_LARGE = "NEGATIVE_LARGE",
+}
+
+export enum SeasonEnum {
+    Summer = "Summer",
+    Winter = "Winter",
+    Spring = "Spring",
+    Autumn = "Autumn",
 }

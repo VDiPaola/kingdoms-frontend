@@ -10,9 +10,9 @@ import { UserType } from "../../Helpers/Types/UserTypes";
 import { Role } from "../../Helpers/Enums/UserEnums";
 import { PageEnum } from "../../Helpers/Enums/PageEnums";
 import HomeContainer from "../../Components/Home/HomeContainer";
-
-
-
+import GameSavesContainer from "../../Components/GameSaves/GameSavesContainer";
+import { GameDataType } from "../../Helpers/Types/GameTypes";
+import { setGameSaves } from "../../State/Slices/firestoreSlice";
 
 
 
@@ -25,8 +25,9 @@ const HomePage = () => {
     const dispatch = useAppDispatch();
 
     useEffect(()=>{
+        
         //authentication
-        firebase.auth().onAuthStateChanged(function(user) {
+        firebase.auth().onAuthStateChanged(async function(user) {
           if(user){
             //signed in
             const userObject: UserType = {
@@ -39,6 +40,23 @@ const HomePage = () => {
     
             dispatch(login(userObject))
             dispatch(auth());
+
+            //get game saves
+            const userRef = firebase.firestore().collection("users").doc(firebase.auth().currentUser?.uid)
+            userRef.get().then((doc) => {
+                if(doc.exists){
+                    console.log(doc.data());
+                    const userData = doc.data();
+                    if(userData){
+                        const saves = userData.gameSaves as Array<GameDataType>;
+                        dispatch(setGameSaves(saves));
+                    }
+                }
+            })
+            .catch((error) => {
+                console.error("Error getting document:", error);
+            });
+
           }else{
             //signed out
             dispatch(logout());
@@ -55,7 +73,7 @@ const HomePage = () => {
         if(isMusicEnabled){
             setMusic(true);
         }
-        setPage(PageEnum.Game);
+        setPage(PageEnum.GameSaves);
     }
 
     const setMusic = (on:boolean) => {
@@ -67,11 +85,22 @@ const HomePage = () => {
         }
     }
 
+    const handleLogoutClick = () => {
+        firebase.auth().signOut()
+        .then(()=>{
+            //signed out
+            dispatch(logout());
+            dispatch(unauth());
+        })
+        .catch((error) => {console.error("Failed to sign out: " + error)})
+    }
+
     return(
         <div className="bg-slate-400 w-screen h-screen flex background overflow-hidden text-white">
             {authState.isAuthenticated && (<>
                 {page === PageEnum.Game && <GameContainer setMusic={setMusic.bind(this)} setPage={setPage}/>}
-                {page === PageEnum.Home && <HomeContainer onPlayClicked={handlePlayClicked}/>}
+                {page === PageEnum.GameSaves && <GameSavesContainer setPage={setPage}/>}
+                {page === PageEnum.Home && <HomeContainer onPlayClicked={handlePlayClicked} onLogoutClick={handleLogoutClick}/>}
             </>)
             }
 

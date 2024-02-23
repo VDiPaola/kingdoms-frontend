@@ -1,7 +1,7 @@
 export enum Role{
-    USER,
-    MEMBER,
-    ADMIN
+    USER = "user",
+    MEMBER = "member",
+    ADMIN = "admin"
 }
 
 export enum Language {

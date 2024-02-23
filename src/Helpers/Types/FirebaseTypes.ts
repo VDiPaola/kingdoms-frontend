@@ -1,5 +1,6 @@
-import firebase from 'firebase/compat/app';
+import { GameDataType } from './GameTypes';
 
-export type FirebaseSliceType = {
-    database?:firebase.database.Database
+export type FirestoreSliceType = {
+    gameSaves:Array<GameDataType>;
+    selectedGameSaveSlot: number;
 }

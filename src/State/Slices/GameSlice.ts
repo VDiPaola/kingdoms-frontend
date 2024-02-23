@@ -1,23 +1,16 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { GameStateType, VariableChangeType } from '../../Helpers/Types/GameTypes';
-import { VariableEnum } from '../../Helpers/Enums/GameEnums';
+import { VariableChangeEnum, VariableEnum } from '../../Helpers/Enums/GameEnums';
 import { VariableChangeAmounts } from '../../Helpers/Constants';
 
 
 const initialState: GameStateType = {
   name:"Steve",
-  variables:[{
-    percentage:50,
-    variable:VariableEnum.Economy
+  variables:{
+    [VariableEnum.Economy]:50,
+    [VariableEnum.Piety]:50,
+    [VariableEnum.Military]:50,
   },
-  {
-    percentage:50,
-    variable:VariableEnum.Piety
-  },
-  {
-    percentage:50,
-    variable:VariableEnum.Military
-  }],
   year:540
 };
 
@@ -25,15 +18,18 @@ const gameSlice = createSlice({
     name: 'game',
     initialState,
     reducers: {
-        variableChanges: (state, action) => {
-            const vars = action.payload as VariableChangeType[];
-           
-            for(let vc of vars){
-                const variable = state.variables.find(v => v.variable === vc.variable);
-                if(variable && !isNaN(VariableChangeAmounts[vc.change])){
-                    variable.percentage += VariableChangeAmounts[vc.change];
-                    if(variable.percentage > 100) variable.percentage = 100;
-                    if(variable.percentage < 0) variable.percentage = 0;
+        variableChanges: (state, action: {payload:VariableChangeType}) => {
+          //process client side variable changes
+            const variableKeys = Object.keys(state.variables);           
+            for(let vck of Object.keys(action.payload)){
+                const variableChangeKey:VariableEnum = vck as VariableEnum;
+                const hasVariable = variableKeys.includes(variableChangeKey);
+                const changeEnum = action.payload[variableChangeKey as VariableEnum]
+                const variableChangeValue = VariableChangeAmounts[changeEnum as VariableChangeEnum];
+                if(hasVariable && !isNaN(variableChangeValue)){
+                    (state.variables[variableChangeKey] as number) += variableChangeValue;
+                    if((state.variables[variableChangeKey] as number) > 100) state.variables[variableChangeKey] = 100;
+                    if((state.variables[variableChangeKey] as number) < 0) state.variables[variableChangeKey] = 0;
                 }
             }
 
