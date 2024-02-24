@@ -13,7 +13,6 @@ const HomeContainer = (props:HomeContainerPropsType) => {
         <>
             <LeftContainer />
             <MiddleContainer>
-                <TitleComponent />
                 <div className="h-full w-full flex justify-center items-center">
                     <div className="w-4/6 h-full flex flex-col space-y-8 p-2 justify-center">
                         <Button size="xl" color="success" onClick={props.onPlayClicked}>Play</Button>

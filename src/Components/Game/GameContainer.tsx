@@ -149,7 +149,7 @@ const GameContainer = (props:GameContainerPropsType) => {
             </div>
         </LeftContainer>
 
-        <MiddleContainer>
+        <MiddleContainer hasTitle={false}>
             {gameSave && <>
                 <GameStats variables={gameVars} variableChanges={isProcessingRef.current ? undefined : selectedVariableChanges}/>
                 {cards.length > 0 && 

@@ -1,28 +1,33 @@
 import { PropsWithChildren } from "react"
+import TitleComponent from "./TitleComponent"
 
-export const LeftContainer = (state:PropsWithChildren) => {
+export const LeftContainer = (props:PropsWithChildren) => {
 
     return (
         <div className="h-full flex-1 hidden lg:flex">
-            {state.children}
+            {props.children}
         </div>
     )
 }
 
-export const MiddleContainer = (state:PropsWithChildren) => {
+type MiddleContainerPropsType = PropsWithChildren & {
+    hasTitle?:boolean
+}
+export const MiddleContainer = (props:MiddleContainerPropsType) => {
 
     return (
         <div className="h-full flex-1 gamePrimary flex flex-col">
-            {state.children}
+            {(props.hasTitle || props.hasTitle === undefined) && <TitleComponent />}
+            {props.children}
         </div>
     )
 }
 
-export const RightContainer = (state:PropsWithChildren) => {
+export const RightContainer = (props:PropsWithChildren) => {
 
     return (
         <div className="h-full flex-1 hidden lg:flex">
-            {state.children}
+            {props.children}
         </div>
     )
 }
