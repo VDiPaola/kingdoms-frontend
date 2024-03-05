@@ -1,8 +1,13 @@
 const BACKEND = "http://localhost:4000/";
 
+export type ResponseType<T extends object> = {
+    response:Response,
+    data:T
+}
+
 export class NetworkManager{
 
-    static buildOptions(body={}, method="POST", contentType="application/json"){
+    static buildOptions(body={}, method="POST", contentType="application/json"): RequestInit{
         const options:any = 
             {
                 "headers": {
@@ -21,18 +26,21 @@ export class NetworkManager{
     }
 
     //basic get
-    static REQUEST(endpoint:string, option:{}={}):Promise<{res:any,data:any}>{
+    static REQUEST<T extends object>(endpoint:string, option:{}={}, useBackend:boolean=true):Promise<ResponseType<T>>{
         if(!option.hasOwnProperty("method")){
             option = this.buildOptions({}, "GET");
         }
+
+        if(useBackend){endpoint = BACKEND + endpoint}
+
         return new Promise((resolve,reject)=>{
-            fetch(BACKEND + endpoint, option)
+            fetch(endpoint, option)
             .then(async (res) => {
                 let data = {};
                 try{
                     data = await res.json();
                 }catch(err){}
-                resolve({res, data})
+                resolve({response:res, data:data as T});
             })
             .catch(err => reject(err));
         })

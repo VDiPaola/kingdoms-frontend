@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { GameStateType, VariableChangeType } from '../../Helpers/Types/GameTypes';
+import { GameStateType, GameVariableType, VariableChangeType } from '../../Helpers/Types/GameTypes';
 import { VariableChangeEnum, VariableEnum } from '../../Helpers/Enums/GameEnums';
 import { VariableChangeAmounts } from '../../Helpers/Constants';
 
@@ -35,9 +35,12 @@ const gameSlice = createSlice({
 
             return state;
         },
+        setVariables: (state, action: {payload:GameVariableType}) => {
+          state.variables = action.payload;
+        },
     }
 })
 
 
-export const {variableChanges} = gameSlice.actions;
+export const {variableChanges,setVariables} = gameSlice.actions;
 export default gameSlice.reducer;

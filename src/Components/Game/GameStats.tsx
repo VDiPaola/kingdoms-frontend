@@ -16,7 +16,7 @@ const GameStats = (props:GameStatsPropsType) => {
     return(
         <div className="w-full flex-1">
             <div className="flex justify-around items-center p-2">
-                {variableKeys.map((variableKey,_) => {
+                {variableKeys.sort().map((variableKey,_) => {
                     const variablePercent = props.variables[variableKey as VariableEnum];
                     let classBuilder = "opacity-0";
                     //get variable changes for variable

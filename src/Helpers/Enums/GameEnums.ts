@@ -17,8 +17,13 @@ export enum VariableChangeEnum{
 }
 
 export enum SeasonEnum {
-    Summer = "Summer",
-    Winter = "Winter",
     Spring = "Spring",
+    Summer = "Summer",
     Autumn = "Autumn",
+    Winter = "Winter",
+}
+
+export enum YearEnum{
+    AD = "AD",
+    BC = "BC"
 }

@@ -1,8 +1,7 @@
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import { useAppDispatch, useAppSelector } from "../../State/Hooks";
-import { VariableChangeEnum, VariableEnum } from "../../Helpers/Enums/GameEnums";
-import { variableChanges } from "../../State/Slices/GameSlice";
-import { CardType, GameDataType, VariableChangeType } from "../../Helpers/Types/GameTypes";
+import { addCard, addCards, removeCard, updateGameSave, variableChanges } from "../../State/Slices/firestoreSlice";
+import { CardType, VariableChangeType } from "../../Helpers/Types/GameTypes";
 import GameStats from "./GameStats";
 import GameContent from "./GameContent";
 import useSound from "use-sound";
@@ -15,6 +14,7 @@ import { LeftContainer, MiddleContainer, RightContainer } from "../ContainerComp
 import { setMusicEnabled } from "../../State/Slices/SettingsSlice";
 import { PageEnum } from "../../Helpers/Enums/PageEnums";
 import { ref, set, getDatabase } from 'firebase/database';
+import { GameNetworkManager } from "../../Helpers/Networking/GameNetworkManager";
 
 
 type GameContainerPropsType = {
@@ -25,8 +25,11 @@ type GameContainerPropsType = {
 const GameContainer = (props:GameContainerPropsType) => {
     //game datta
     const slot = useAppSelector(state => state.firestore.selectedGameSaveSlot);
-    const gameSave = useAppSelector(state => state.firestore.gameSaves[slot || 0]);
-    const [cards, setCards]: [Array<CardType>,any] = useState(gameSave?.cardBuffer || []);
+    const gameSave = useAppSelector(state => state.firestore.gameSaves[slot ?? 0]);
+    //const [cards, setCards]: [Array<CardType>,any] = useState(gameSave?.cardBuffer || []);
+    const cards = useMemo(()=> {
+        return gameSave?.cardBuffer ?? [];
+    }, [gameSave]);
 
     const isMusicEnabled = useAppSelector(state => state.settings.musicEnabled);
 
@@ -34,8 +37,6 @@ const GameContainer = (props:GameContainerPropsType) => {
 
     const maxDegRef = useRef<number>(window.screen.availWidth / 90);
 
-
-    const gameVars = useAppSelector(state => state.game.variables);
     const isProcessingRef = useRef<boolean>(false);
     const [isCardThrown, setIsCardThrown] = useState(false);
 
@@ -46,39 +47,15 @@ const GameContainer = (props:GameContainerPropsType) => {
 
     const dispatch = useAppDispatch();
 
-    //test data
-    // const [cards,setCards]: [CardType[],any] = useState([{
-    //     text:"A Civil uprising has started, shall we send our troops to stop them?",
-    //     characterName:"James",
-    //     characterTitle:"Military Captain",
-    //     option1:{text:"Yes", variableChanges:[
-    //         {variable:VariableEnum.Military,change:VariableChangeEnum.NEGATIVE_SMALL},
-    //         {variable:VariableEnum.Economy,change:VariableChangeEnum.POSITIVE_MEDIUM},
-    //     ]},
-    //     option2:{text:"No", variableChanges:[
-    //         {variable:VariableEnum.Military,change:VariableChangeEnum.POSITIVE_LARGE},
-    //         {variable:VariableEnum.Economy,change:VariableChangeEnum.NEGATIVE_MEDIUM},
-    //     ]},
-    //     image:"https://res.cloudinary.com/devolver-digital/image/upload/v1704993339/mothership-payload/1704993339346_thumbnail-reigns-3k_duacd0.jpg"
-    // },
-    // {
-    //     text:"Theres a flood in town",
-    //     characterName:"Jon ice",
-    //     characterTitle:"lord of the something else",
-    //     option1:{text:"Let them Die", variableChanges:[]},
-    //     option2:{text:"Save Them", variableChanges:[]},
-    //     image:"https://res.cloudinary.com/devolver-digital/image/upload/v1704993339/mothership-payload/1704993339346_thumbnail-reigns-3k_duacd0.jpg"
-    // }]);
-
     useEffect(()=>{
         // const db = getDatabase();
         // set(ref(db, 'cards'), {
         //   username: name,
         // });
-        console.log(cards)
-    }, [cards])
 
-    const handleMouseMove = (distance:number, isTouchEnabled:boolean) => {
+    }, [])
+
+    const handleMouseMove = (distance:number) => {
         //card animation
         if(distance > maxDegRef.current) distance = maxDegRef.current;
         if(distance < -maxDegRef.current) distance = -maxDegRef.current;
@@ -112,6 +89,12 @@ const GameContainer = (props:GameContainerPropsType) => {
                 break;
         }
 
+        // use card on back end
+        GameNetworkManager.UseCard({cardUID:cards[0].uid, option:side === "left" ? "option1" : "option2", slot:gameSave.slot})
+        .then((gameSave) => {
+            dispatch(updateGameSave(gameSave));
+        })
+
         //throws current card
         setIsCardThrown(true);
         throwSFXPlay();
@@ -120,7 +103,8 @@ const GameContainer = (props:GameContainerPropsType) => {
     const turnNextCard = () => {
         setCardDeg(0);
         setIsCardThrown(false);
-        setCards(cards.slice(1));
+
+        dispatch(removeCard());
 
         isProcessingRef.current = false;
     }
@@ -145,13 +129,17 @@ const GameContainer = (props:GameContainerPropsType) => {
         <>
         <LeftContainer>
             <div className="h-full w-full flex flex-col justify-end">
-                <p className="font-bold text-xl p-4">{gameSave?.playerName || ""}</p>
+                <div className="flex flex-col">
+                    <p className="font-bold text-xl px-4 py-2">{gameSave?.playerName || ""}</p>
+                    <p className="font-bold text-xl px-4 py-2">{gameSave?.playerTitle || ""}</p>
+                </div>
+                
             </div>
         </LeftContainer>
 
         <MiddleContainer hasTitle={false}>
             {gameSave && <>
-                <GameStats variables={gameVars} variableChanges={isProcessingRef.current ? undefined : selectedVariableChanges}/>
+                <GameStats variables={gameSave.variables} variableChanges={isProcessingRef.current ? undefined : selectedVariableChanges}/>
                 {cards.length > 0 && 
                     <GameContent 
                         GameControllerProps={{onClick:handleGameControllerClick,onMouseMove:handleMouseMove}} 
@@ -189,7 +177,11 @@ const GameContainer = (props:GameContainerPropsType) => {
             
 
         <RightContainer>
-            <p>{gameSave?.year || ""}</p>
+            <div className="flex flex-col">
+                <p>{gameSave?.year ?? ""}</p>
+                <p>{gameSave?.season ?? ""}</p>
+            </div>
+            
         </RightContainer>
         </>
     )

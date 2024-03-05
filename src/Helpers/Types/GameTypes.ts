@@ -1,6 +1,7 @@
 import { SeasonEnum, VariableChangeEnum, VariableEnum } from "../Enums/GameEnums"
 
 export type CardType = {
+    uid: string;
     text:string;
     characterName:string;
     characterTitle:string;
@@ -35,7 +36,16 @@ export type GameDataType = {
     season: SeasonEnum;
     cardBuffer: Array<CardType>;
     playerName: string;
+    playerTitle: string;
     location: string;
     world: string;
-    variables: Array<GameVariableType>;
+    variables: GameVariableType;
+}
+
+export type WorldType = {
+    id:number;
+    name:string;
+    description:string;
+    prompt:string;
+    variables: Array<VariableEnum>;
 }
