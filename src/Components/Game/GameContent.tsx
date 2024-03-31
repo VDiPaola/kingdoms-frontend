@@ -88,6 +88,7 @@ const GameContent = (props:GameContentPropsType) => {
 
                 //flip card
                 cardFlipSfxPlay();
+                if(animatedCardRef.current) animatedCardRef.current.style.backgroundImage = ``;
                 api.set({opacity:1});
                 api.start({
                     from: { skewX: 0,rotateY:0 },

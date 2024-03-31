@@ -14,6 +14,7 @@ import GameSavesContainer from "../../Components/GameSaves/GameSavesContainer";
 import { GameDataType } from "../../Helpers/Types/GameTypes";
 import { setGameSaves } from "../../State/Slices/firestoreSlice";
 import NewGameContainer from "../../Components/NewGame/NewGameContainer";
+import SettingsContainer from "../../Components/Settings/SettingsContainer";
 
 
 
@@ -96,13 +97,27 @@ const HomePage = () => {
         .catch((error) => {console.error("Failed to sign out: " + error)})
     }
 
+    const handleSettingsClick = () => {
+        setPage(PageEnum.Settings);
+    }
+
+    const handleMusicChange = (songName:string) => {
+        player.sound.unload();
+        player.sound._src = "./music/" + songName;
+        player.sound.once('load', function() {
+            setMusic(true);
+          });
+        player.sound.load();
+    }
+
     return(
         <div className="bg-slate-400 w-screen h-screen flex background overflow-hidden text-white">
             {authState.isAuthenticated && (<>
                 {page === PageEnum.Game && <GameContainer setMusic={setMusic.bind(this)} setPage={setPage}/>}
                 {page === PageEnum.GameSaves && <GameSavesContainer setPage={setPage}/>}
                 {page === PageEnum.NewGame && <NewGameContainer setPage={setPage}/>}
-                {page === PageEnum.Home && <HomeContainer onPlayClicked={handlePlayClicked} onLogoutClick={handleLogoutClick}/>}
+                {page === PageEnum.Settings && <SettingsContainer handleMusicChange={handleMusicChange} setPage={setPage}/>}
+                {page === PageEnum.Home && <HomeContainer onSettingsClick={handleSettingsClick} onPlayClicked={handlePlayClicked} onLogoutClick={handleLogoutClick}/>}
             </>)
             }
 

@@ -163,11 +163,6 @@ const GameContainer = (props:GameContainerPropsType) => {
                         <div className="hover:drop-shadow-md hover:scale-105 transition-all duration-100 ease-out cursor-pointer p-1 relative z-50" onClick={handleMuteClick}>
                             {isMusicEnabled ? <ImVolumeMedium /> : <ImVolumeMute2 /> }
                         </div>
-
-                        
-                        
-                        
-
                     </div>
                     
                 </div>

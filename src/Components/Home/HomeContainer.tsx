@@ -1,10 +1,10 @@
 import { Button } from "flowbite-react";
 import { LeftContainer, MiddleContainer, RightContainer } from "../ContainerComponents";
-import TitleComponent from "../TitleComponent";
 
 type HomeContainerPropsType = {
     onPlayClicked:Function;
-    onLogoutClick:Function
+    onLogoutClick:Function;
+    onSettingsClick:Function;
 }
 
 const HomeContainer = (props:HomeContainerPropsType) => {
@@ -17,7 +17,7 @@ const HomeContainer = (props:HomeContainerPropsType) => {
                     <div className="w-4/6 h-full flex flex-col space-y-8 p-2 justify-center">
                         <Button size="xl" color="success" onClick={props.onPlayClicked}>Play</Button>
                         <Button size="xl" onClick={()=>{}}>Stats</Button>
-                        <Button size="xl" onClick={()=>{}}>Settings</Button>
+                        <Button size="xl" onClick={props.onSettingsClick}>Settings</Button>
                         <Button size="xl" color="failure" onClick={props.onLogoutClick}>Logout</Button>
                     </div>
                     
