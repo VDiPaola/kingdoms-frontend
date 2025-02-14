@@ -1,31 +1,31 @@
 {
-  "name": "project-name",
+  "name": "kingdoms",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@projectstorm/react-diagrams": "^7.0.2",
-    "@react-spring/web": "^9.7.3",
-    "@reduxjs/toolkit": "^1.9.5",
-    "@testing-library/jest-dom": "^5.16.4",
-    "@testing-library/react": "^13.1.1",
+    "@projectstorm/react-diagrams": "^7.0.4",
+    "@react-spring/web": "^9.7.5",
+    "@reduxjs/toolkit": "^1.9.7",
+    "@testing-library/jest-dom": "^5.17.0",
+    "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
-    "@types/jest": "^29.5.3",
-    "@types/node": "^20.4.9",
-    "@types/react": "^18.2.19",
-    "@types/react-dom": "^18.2.7",
-    "firebase": "^10.8.0",
+    "@types/jest": "^29.5.14",
+    "@types/node": "^20.17.18",
+    "@types/react": "^18.3.18",
+    "@types/react-dom": "^18.3.5",
+    "firebase": "^10.14.1",
     "firebaseui": "^6.1.0",
     "flowbite": "^1.8.1",
     "flowbite-react": "^0.5.0",
-    "react": "^18.0.0",
-    "react-dom": "^18.0.0",
-    "react-icons": "^4.3.1",
-    "react-redux": "^8.1.2",
-    "react-router-dom": "^6.3.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-icons": "^4.12.0",
+    "react-redux": "^8.1.3",
+    "react-router-dom": "^6.29.0",
     "react-scripts": "5.0.1",
     "redux-persist": "^6.0.0",
     "typescript": "^4.9.5",
-    "use-sound": "^4.0.1",
+    "use-sound": "^4.0.3",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
@@ -33,12 +33,6 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
   },
   "browserslist": {
     "production": [
@@ -53,8 +47,15 @@
     ]
   },
   "devDependencies": {
-    "autoprefixer": "^10.4.14",
-    "postcss": "^8.4.27",
-    "tailwindcss": "^3.3.3"
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.5.2",
+    "tailwindcss": "^3.4.17"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "core-js",
+      "core-js-pure",
+      "protobufjs"
+    ]
   }
 }

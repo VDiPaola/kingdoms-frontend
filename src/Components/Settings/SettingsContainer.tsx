@@ -38,7 +38,7 @@ const SettingsContainer = (props:SettingsContainerPropsType) => {
                     </Dropdown>
                 </div>
 
-                <RangeSlider sizing="sm" />
+                {/* <RangeSlider sizing="sm" /> */}
             </div>
 
             {/* FOOTER */}
