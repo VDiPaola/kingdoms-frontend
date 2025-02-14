@@ -16,20 +16,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Setup Node.js and pnpm
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18  # Adjust the Node.js version if needed
-          cache: 'pnpm'
-
-      - name: Install pnpm
-        run: npm install -g pnpm
-
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: npm install
 
       - name: Build project
-        run: pnpm run build
+        run: npm run build
 
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
