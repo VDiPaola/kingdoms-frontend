@@ -2,6 +2,7 @@
   "name": "kingdoms",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://vdipaola.github.io/kingdoms-frontend/",
   "dependencies": {
     "@projectstorm/react-diagrams": "^7.0.4",
     "@react-spring/web": "^9.7.5",
