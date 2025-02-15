@@ -25,7 +25,8 @@ type GameContainerPropsType = {
 const GameContainer = (props:GameContainerPropsType) => {
     //game datta
     const slot = useAppSelector(state => state.firestore.selectedGameSaveSlot);
-    const gameSave = useAppSelector(state => state.firestore.gameSaves[slot ?? 0]);
+    const gameSaves = useAppSelector(state => state.firestore.gameSaves);
+    const gameSave = gameSaves.find(save => save.slot === slot);
     //const [cards, setCards]: [Array<CardType>,any] = useState(gameSave?.cardBuffer || []);
     const cards = useMemo(()=> {
         return gameSave?.cardBuffer ?? [];
@@ -90,7 +91,7 @@ const GameContainer = (props:GameContainerPropsType) => {
         }
 
         // use card on back end
-        GameNetworkManager.UseCard({cardUID:cards[0].uid, option:side === "left" ? "option1" : "option2", slot:gameSave.slot})
+        GameNetworkManager.UseCard({cardUID:cards[0].uid, option:side === "left" ? "option1" : "option2", slot:gameSave!.slot})
         .then((gameSave) => {
             dispatch(updateGameSave(gameSave));
         })

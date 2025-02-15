@@ -28,6 +28,7 @@ const firebaseConfig = {
   appId: "1:70709251243:web:766fdc7143f5d4868cbbee",
   measurementId: "G-VW1DSFXFNE",
   databaseURL: "https://kingdoms-84a59-default-rtdb.firebaseio.com",
+  
 };
 
 // Initialize Firebase
