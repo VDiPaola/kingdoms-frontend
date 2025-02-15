@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/kingdoms-frontend/static/css/main.dcb2d9fc.css",
-    "main.js": "/kingdoms-frontend/static/js/main.fd07703c.js",
+    "main.js": "/kingdoms-frontend/static/js/main.629d6fa2.js",
     "static/js/453.f73864c3.chunk.js": "/kingdoms-frontend/static/js/453.f73864c3.chunk.js",
     "static/js/885.96dcaac4.chunk.js": "/kingdoms-frontend/static/js/885.96dcaac4.chunk.js",
     "static/media/castle.jpg": "/kingdoms-frontend/static/media/castle.ddf3176a5234fa2091fa.jpg",
@@ -10,12 +10,12 @@
     "static/media/card_swipe.mp3": "/kingdoms-frontend/static/media/card_swipe.5998ca419cbf61111147.mp3",
     "index.html": "/kingdoms-frontend/index.html",
     "main.dcb2d9fc.css.map": "/kingdoms-frontend/static/css/main.dcb2d9fc.css.map",
-    "main.fd07703c.js.map": "/kingdoms-frontend/static/js/main.fd07703c.js.map",
+    "main.629d6fa2.js.map": "/kingdoms-frontend/static/js/main.629d6fa2.js.map",
     "453.f73864c3.chunk.js.map": "/kingdoms-frontend/static/js/453.f73864c3.chunk.js.map",
     "885.96dcaac4.chunk.js.map": "/kingdoms-frontend/static/js/885.96dcaac4.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.dcb2d9fc.css",
-    "static/js/main.fd07703c.js"
+    "static/js/main.629d6fa2.js"
   ]
 }
